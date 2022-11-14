@@ -69,10 +69,10 @@ impl State for GameState {
 
 impl GameState {
     fn new(ctx: &mut Context) -> tetra::Result<GameState> {
-        let paddle_texture = Texture::new(ctx, "./resources/png/paddleBlu.png")?;
+        let paddle_texture = Texture::new(ctx, "./resources/paddleBlu.png")?;
         let paddle_position = Vec2::new((WINDOW_WIDTH - paddle_texture.width() as f32) / 2.0, WINDOW_HEIGHT - paddle_texture.height() as f32);
         
-        let ball_texture = Texture::new(ctx, "./resources/png/ballGrey.png")?;
+        let ball_texture = Texture::new(ctx, "./resources/ballGrey.png")?;
         let ball_position = Vec2::new(
             WINDOW_WIDTH / 2.0 - ball_texture.width() as f32 / 2.0,
             WINDOW_HEIGHT / 2.0 - ball_texture.height() as f32 / 2.0,

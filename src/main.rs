@@ -1,4 +1,4 @@
-use tetra::{Context, ContextBuilder, State};
+use tetra::{Context, ContextBuilder, State, window};
 use tetra::graphics::{self, Color, Texture, Rectangle};
 use tetra::input::{self, Key};
 use tetra::math::Vec2;
@@ -8,6 +8,9 @@ const WINDOW_HEIGHT: f32 = 480.0;
 
 const PADDLE_SPEED: f32 = 8.0;
 const BALL_SPEED: f32 = 5.0;
+
+const PADDLE_SPIN: f32 = 4.0;
+const BALL_ACCELERATION: f32 = 0.05;
 
 fn main() -> tetra::Result {
     ContextBuilder::new("Rustanoid", WINDOW_WIDTH as i32, WINDOW_HEIGHT as i32)
@@ -51,6 +54,13 @@ impl Entity {
             self.height(),
         )
     }
+
+    fn centre(&self) -> Vec2<f32> {
+        Vec2::new(
+            self.position.x + (self.width() / 2.0),
+            self.position.y + (self.height() / 2.0),
+        )
+    }
 }
 
 struct GameState {
@@ -89,8 +99,12 @@ impl State for GameState {
             None 
         };
 
-        if paddle_hit.is_some() {
-            self.ball.velocity.y = -self.ball.velocity.y;
+        if let Some(paddle) = paddle_hit {
+            self.ball.velocity.y = -(self.ball.velocity.y + (BALL_ACCELERATION * self.ball.velocity.y.signum()));
+
+            let offset = (paddle.centre().x - self.ball.centre().x) / paddle.width();
+
+            self.ball.velocity.x += PADDLE_SPIN * -offset;
         }
 
         if self.ball.position.x <= 0.0 

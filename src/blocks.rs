@@ -20,7 +20,7 @@ pub const LEVEL1: [(&str, (f32, f32)); 12] = [
     (GREY_RECTANGLE, (430.0, 40.0)),
     (PURPLE_RECTANGLE, (530.0, 60.0)),
     (GREY_SQUARE, (330.0, 310.0)),
-    (PURPLE_SQUARE, (15.0, 515.0)),
+    (PURPLE_SQUARE, (15.0, 415.0)),
     (RED_RECTANGLE, (40.0, 260.0)),
     (YELLOW_RECTANGLE, (50.0, 160.0)),
     (YELLOW_SQUARE, (360.0, 360.0)),

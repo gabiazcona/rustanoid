@@ -21,7 +21,9 @@ pub struct GameState {
     paddle: Entity,
     ball: Entity,
     lost_text: Text,
+    win_text: Text,
     game_end: bool,
+    player_win: bool,
     blocks: Vec<Entity>,
 }
 
@@ -36,7 +38,11 @@ impl State for GameState {
         self.ball.texture.draw(ctx, self.ball.position);
 
         if self.game_end {
-            self.lost_text.draw(ctx, Vec2::new(WINDOW_WIDTH/2.0, WINDOW_HEIGHT/2.0));
+            if self.player_win {
+                self.win_text.draw(ctx, Vec2::new(WINDOW_WIDTH/2.0, WINDOW_HEIGHT/2.0));
+            } else {
+                self.lost_text.draw(ctx, Vec2::new(WINDOW_WIDTH/2.0, WINDOW_HEIGHT/2.0));
+            }
         }
 
         for block in self.blocks.iter() {
@@ -86,10 +92,15 @@ impl State for GameState {
                 self.ball.velocity.y = -self.ball.velocity.y;
             }
             
-            // check if ball collides with any block
+            // check if ball collides with any block and if any block alive
+            let mut block_alive = false;
             for block in self.blocks.iter_mut() {
                 if ball_bounds.intersects(&block.bounds()) {
                     block.kill();
+                }
+
+                if block.alive {
+                    block_alive = true;
                 }
             }
 
@@ -97,6 +108,12 @@ impl State for GameState {
             if self.ball.position.y >= WINDOW_HEIGHT {
                 self.game_end = true;
                 println!("YOU LOST!");
+            }
+
+            // check if player win
+            if !block_alive {
+                self.game_end = true;
+                self.player_win = true;
             }
 
         }
@@ -120,12 +137,18 @@ impl GameState {
             "You lost!",
             Font::vector(ctx, "./resources/DejaVuSansMono.ttf", 36.0)?,
         );
+        let win_text = Text::new(
+            "You win!",
+            Font::vector(ctx, "./resources/DejaVuSansMono.ttf", 36.0)?,
+        );
 
         let blocks = Self::load(ctx, &blocks::LEVEL1)?;
 
         Ok(GameState {
             game_end: false,
             lost_text: lost_text,
+            win_text: win_text,
+            player_win: false,
             paddle: Entity::new(paddle_texture, paddle_position),
             ball: Entity::with_velocity(ball_texture, ball_position, ball_velocity),
             blocks: blocks,

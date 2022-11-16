@@ -94,13 +94,18 @@ impl State for GameState {
             
             // check if ball collides with any block and if any block alive
             let mut block_alive = false;
-            for block in self.blocks.iter_mut() {
-                if ball_bounds.intersects(&block.bounds()) {
-                    block.kill();
-                }
-
+            for block in self.blocks.iter_mut() {                
                 if block.alive {
-                    block_alive = true;
+                    if ball_bounds.intersects(&block.bounds()) {
+                        block.kill();
+                        self.ball.velocity.y = -(self.ball.velocity.y);
+    
+                        let offset = (block.centre().x - self.ball.centre().x) / block.width();
+    
+                        self.ball.velocity.x += PADDLE_SPIN * -offset
+                    } else {
+                        block_alive = true;
+                    }
                 }
             }
 
